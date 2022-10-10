@@ -1,6 +1,7 @@
 const port = process.env.PORT || 3030;
 const bodyparser = require('body-parser');
 const express = require('express');
+const bcrypt = require('bcrypt');
 const cors = require('cors');
 const app = express();
 
@@ -44,20 +45,26 @@ app.get('/users/:email',(req, res)=>{
     });
 });
 
+// Hash user password
+app.get('/hash/:pw',(req,res)=>{
 
+    const plainTextPassword = req.params.pw;
+    const hasPassword = plainTextPassword.trim();
 
+    if(!hasPassword){
+        res.json({ message: 'no password was provided' });
+        return;
+    }
 
+    // Create a salt & hash of the password
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(plainTextPassword, salt);
 
-
-
-
-
-
-
-
-
-
-
+    res.json({
+        salt, hash,
+        pw : plainTextPassword,
+    });
+});
 
 
 
